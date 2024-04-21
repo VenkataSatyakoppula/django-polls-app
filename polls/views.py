@@ -7,6 +7,6 @@ def list_questions(request):
     q_serialer = QuestionSerializer(questions,many=True)
     return JsonResponse(q_serialer.data,safe=False)
 
-#def hello_view(request):
-#        return HttpResponse("Hello")
+def hello_view(request):
+        return HttpResponse("Hello")
 
