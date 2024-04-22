@@ -1,6 +1,7 @@
 from django.http import HttpResponse,JsonResponse
 from .models import Question
-from .serialize import QuestionSerializer 
+from .serialize import QuestionSerializer
+from django.http import JsonResponse
 
 def list_questions(request):
     questions = Question.objects.all()
