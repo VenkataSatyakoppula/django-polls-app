@@ -1,13 +1,32 @@
-from django.http import HttpResponse,JsonResponse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Question
-from .serialize import QuestionSerializer
-from django.http import JsonResponse
+from .serialize import QuestionSerializer, AnswerSerializer
+from rest_framework.parsers import FormParser,MultiPartParser
 
-def list_questions(request):
-    questions = Question.objects.all()
-    q_serialer = QuestionSerializer(questions,many=True)
-    return JsonResponse(q_serialer.data,safe=False)
+from polls import serialize
 
-def hello_view(request):
-        return HttpResponse("Hello")
+class QuestionCreateAPIView(APIView):
+    parser_classes = [FormParser,MultiPartParser]
+    
+    def get(self,request,format=None):
+        all_questions = Question.objects.all();
+        serializer = QuestionSerializer(all_questions,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = QuestionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AnswerCreateAPIView(APIView):
+    def post(self, request, format=None):
+        serializer = AnswerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
